@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Safari: Times Tables Adventure</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fdf4ff 0%, #f0fdf4 40%, #e0f2fe 100%);
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
+            user-select: none;
+            -webkit-user-select: none;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        h1, h2, h3, h4, .font-fun {
+            font-family: 'Fredoka', cursive;
+        }
+
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        @keyframes dance {
+            0%, 100% { transform: translateY(0) rotate(-4deg); }
+            50% { transform: translateY(-15px) rotate(4deg) scale(1.05); }
+        }
+
+        @keyframes rainbow-pulse {
+            0% { border-color: #f43f5e; }
+            25% { border-color: #3b82f6; }
+            50% { border-color: #10b981; }
+            75% { border-color: #eab308; }
+            100% { border-color: #f43f5e; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .animate-float {
+            animation: float-gentle 3s infinite ease-in-out;
+        }
+
+        .animate-dance {
+            animation: dance 0.8s infinite ease-in-out;
+        }
+
+        .animate-pop {
+            animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .rainbow-border {
+            animation: rainbow-pulse 4s infinite linear;
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* 3D Visual Styling */
+        .btn-3d-green {
+            box-shadow: 0 6px 0 #059669;
+            transition: all 0.1s ease;
+        }
+        .btn-3d-green:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #059669;
+        }
+
+        .btn-3d-orange {
+            box-shadow: 0 6px 0 #ea580c;
+            transition: all 0.1s ease;
+        }
+        .btn-3d-orange:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #ea580c;
+        }
+
+        .btn-3d-purple {
+            box-shadow: 0 6px 0 #7e22ce;
+            transition: all 0.1s ease;
+        }
+        .btn-3d-purple:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #7e22ce;
+        }
+
+        .btn-3d-pink {
+            box-shadow: 0 6px 0 #be185d;
+            transition: all 0.1s ease;
+        }
+        .btn-3d-pink:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #be185d;
+        }
+
+        .card-3d {
+            box-shadow: 0 10px 0 rgba(0, 0, 0, 0.08), 0 6px 20px rgba(0,0,0,0.06);
+        }
+
+        .dot-array-container {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        /* Speech Bubble Tail */
+        .speech-bubble {
+            position: relative;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 12px 12px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Avatar Frames */
+        .frame-none { border: 4px solid #cbd5e1; }
+        .frame-gold { border: 5px solid #f59e0b; box-shadow: 0 0 15px #fde047; }
+        .frame-neon { border: 5px solid #06b6d4; box-shadow: 0 0 15px #22d3ee; }
+        .frame-rainbow { border: 5px solid #ec4899; animation: rainbow-pulse 2s infinite linear; }
+        .frame-royal { border: 5px solid #a855f7; box-shadow: 0 0 15px #c084fc; }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between p-3 md:p-6 antialiased">
+
+    <!-- TOP HEADER / NAV BAR -->
+    <header class="max-w-5xl mx-auto w-full bg-white/90 backdrop-blur-md rounded-3xl p-4 shadow-xl border-4 border-amber-300 flex flex-wrap items-center justify-between gap-4 mb-6">
+        
+        <!-- Left Avatar & Title -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="app.showAvatarShop()">
+            <div class="relative">
+                <div id="header-avatar-container" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-400 to-indigo-500 flex items-center justify-center text-3xl shadow-md frame-none transition transform hover:scale-105">
+                    <span id="header-avatar-emoji">🦁</span>
+                    <span id="header-avatar-hat" class="absolute -top-3 -right-2 text-xl"></span>
+                </div>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-2xl font-black text-amber-600 tracking-wide leading-none">Math Safari</h1>
+                    <span id="header-avatar-title" class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-extrabold uppercase tracking-wider border border-amber-300">Novice</span>
+                </div>
+                <span class="text-xs font-bold text-emerald-600 tracking-wider">Tap Avatar to Upgrade! ✨</span>
+            </div>
+        </div>
+
+        <!-- Middle Stats Bar -->
+        <div class="flex items-center gap-3 sm:gap-5 bg-gradient-to-r from-amber-50 via-rose-50 to-emerald-50 px-4 py-2 rounded-2xl border-2 border-amber-200 shadow-inner">
+            <!-- Coins -->
+            <div class="flex items-center gap-1.5" title="Safari Coins">
+                <span class="text-xl">🪙</span>
+                <span id="total-coins-count" class="font-black text-lg text-amber-600">0</span>
+            </div>
+            <!-- Total Stars -->
+            <div class="flex items-center gap-1.5" title="Total Stars">
+                <i class="fa-solid fa-star text-amber-400 text-xl filter drop-shadow"></i>
+                <span id="total-stars-count" class="font-extrabold text-lg text-slate-700">0</span>
+            </div>
+            <!-- Streak -->
+            <div class="flex items-center gap-1.5" title="Daily Streak">
+                <i class="fa-solid fa-fire text-orange-500 text-xl animate-bounce"></i>
+                <span id="streak-count" class="font-extrabold text-lg text-slate-700">1d</span>
+            </div>
+        </div>
+
+        <!-- Controls (Sound, Shop, Trophy) -->
+        <div class="flex items-center gap-2">
+            <button onclick="app.showAvatarShop()" class="px-3.5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center gap-2 border-2 border-purple-300">
+                <i class="fa-solid fa-store text-yellow-300"></i>
+                <span class="hidden sm:inline">Shop</span>
+            </button>
+
+            <button onclick="app.showTrophyRoom()" class="px-3.5 py-2 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center gap-2 border-2 border-amber-300">
+                <i class="fa-solid fa-trophy text-yellow-100"></i>
+                <span class="hidden sm:inline">Badges</span>
+            </button>
+
+            <button id="audio-toggle-btn" onclick="app.toggleAudio()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold transition flex items-center justify-center border-2 border-slate-300">
+                <i id="audio-icon" class="fa-solid fa-volume-high text-lg text-emerald-600"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center">
+
+        <!-- VIEW 1: WORLD MAP / LEVEL SELECTOR -->
+        <section id="view-world-map" class="space-y-6">
+            <div class="text-center space-y-2">
+                <h2 class="text-3xl sm:text-5xl font-black bg-gradient-to-r from-pink-500 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
+                    Select a Safari Zone! 🌴
+                </h2>
+                <p class="text-slate-600 font-bold text-base sm:text-lg">Learn tables 1 to 10, watch animated story cutscenes, earn 🪙 coins & ⭐ stars!</p>
+            </div>
+
+            <!-- Level Grid -->
+            <div id="level-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 pt-2">
+                <!-- Levels 1 to 10 rendered here -->
+            </div>
+
+            <!-- Boss Level Banner -->
+            <div id="boss-level-container" class="mt-8 pt-4 border-t-2 border-amber-200">
+                <!-- Boss level rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- VIEW 2: STUDY & PRACTICE MODE -->
+        <section id="view-study" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="app.showWorldMap()" class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-2xl transition shadow-md border-2 border-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left text-emerald-500"></i> Safari Map
+                </button>
+                <div id="study-level-title" class="text-2xl font-black text-emerald-700">Table 2 Practice</div>
+                <button onclick="app.triggerStartCutscene(app.currentLevel)" class="px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-500 text-white font-black rounded-2xl btn-3d-green transition flex items-center gap-2 text-lg">
+                    Start Quiz <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+
+            <!-- Interactive Flashcard -->
+            <div class="bg-white/95 rounded-3xl p-6 sm:p-8 card-3d border-4 border-emerald-300 max-w-2xl mx-auto space-y-6 text-center">
+                <div class="flex items-center justify-between gap-4">
+                    <button onclick="app.prevStudyCard()" class="w-12 h-12 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-2xl font-black text-2xl flex items-center justify-center transition">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <div class="space-y-1">
+                        <div id="study-equation" class="text-5xl sm:text-7xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent tracking-wider">
+                            2 × 3 = 6
+                        </div>
+                        <div id="study-repeated-addition" class="text-amber-600 font-extrabold text-xl">
+                            2 + 2 + 2 = 6
+                        </div>
+                    </div>
+
+                    <button onclick="app.nextStudyCard()" class="w-12 h-12 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-2xl font-black text-2xl flex items-center justify-center transition">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Visual Dot Grid -->
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 border-2 border-emerald-200 space-y-3">
+                    <div class="text-xs font-black text-emerald-700 uppercase tracking-widest">Visual Group Helper</div>
+                    <div id="study-visual-array" class="flex flex-col items-center justify-center gap-2 min-h-[120px] dot-array-container">
+                        <!-- Dots -->
+                    </div>
+                    <p id="study-explanation" class="text-base font-extrabold text-emerald-900">
+                        "3 groups of 2 objects equal 6!"
+                    </p>
+                </div>
+
+                <!-- Selector Pills -->
+                <div class="space-y-2">
+                    <div class="text-xs font-black text-slate-400 uppercase tracking-wider">Quick Select</div>
+                    <div id="study-pills" class="flex flex-wrap justify-center gap-2">
+                        <!-- Pills 1-10 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: QUIZ MODE (WITH 5 HEARTS) -->
+        <section id="view-quiz" class="hidden space-y-6 max-w-2xl mx-auto w-full">
+            <div class="bg-white/95 rounded-3xl p-4 shadow-lg border-4 border-amber-300 flex items-center justify-between gap-4">
+                <button onclick="app.showWorldMap()" class="text-slate-400 hover:text-slate-600 text-2xl px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <!-- 5 Lives Display -->
+                <div id="quiz-lives" class="flex gap-1.5 text-red-500 text-xl sm:text-2xl filter drop-shadow">
+                    <!-- 5 hearts rendered here -->
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="flex-1 max-w-[160px] bg-slate-100 rounded-full h-4 overflow-hidden border border-slate-300">
+                    <div id="quiz-progress-bar" class="bg-gradient-to-r from-emerald-400 to-green-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Score -->
+                <div class="bg-amber-100 px-3 py-1.5 rounded-2xl text-amber-800 font-black text-sm sm:text-base border border-amber-300">
+                    Points: <span id="quiz-score" class="text-amber-900">0</span>
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div id="quiz-card" class="bg-white rounded-3xl p-6 sm:p-10 card-3d border-4 border-purple-300 text-center space-y-8 relative overflow-hidden">
+                <div class="space-y-2">
+                    <div id="quiz-question-number" class="text-xs font-black text-purple-600 uppercase tracking-widest">Question 1 of 10</div>
+                    <div id="quiz-question-text" class="text-5xl sm:text-7xl font-black text-slate-800 tracking-wider">
+                        5 × 4 = ?
+                    </div>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="quiz-options-grid" class="grid grid-cols-2 gap-4">
+                    <!-- 4 options -->
+                </div>
+
+                <!-- Feedback Banner -->
+                <div id="quiz-feedback" class="hidden rounded-2xl p-4 text-center font-black text-xl animate-float">
+                    <!-- Feedback Text -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: AVATAR CUSTOMIZATION & SHOP -->
+        <section id="view-shop" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="app.showWorldMap()" class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-2xl transition shadow-md border-2 border-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left text-emerald-500"></i> Safari Map
+                </button>
+                <h2 class="text-3xl font-black text-purple-700">Avatar & Upgrade Shop 🎨</h2>
+                <div class="flex items-center gap-1 bg-amber-100 px-4 py-2 rounded-2xl border border-amber-300">
+                    <span class="text-xl">🪙</span>
+                    <span id="shop-coins-count" class="font-black text-amber-800 text-lg">0</span>
+                </div>
+            </div>
+
+            <!-- Avatar Preview Stage -->
+            <div class="bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-3xl p-6 text-white card-3d border-4 border-purple-300 flex flex-col sm:flex-row items-center justify-around gap-6">
+                <div class="flex flex-col items-center gap-2">
+                    <div class="relative">
+                        <div id="shop-preview-avatar-container" class="w-28 h-28 rounded-3xl bg-white flex items-center justify-center text-6xl shadow-2xl frame-none">
+                            <span id="shop-preview-emoji">🦁</span>
+                            <span id="shop-preview-hat" class="absolute -top-6 -right-3 text-4xl"></span>
+                        </div>
+                    </div>
+                    <div id="shop-preview-title" class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-wider uppercase border border-white/30 mt-2">Novice Explorer</div>
+                </div>
+
+                <div class="text-center sm:text-left space-y-2 max-w-sm">
+                    <h3 class="text-2xl font-black">Customize Your Explorer!</h3>
+                    <p class="text-purple-100 text-sm font-bold">Earn 🪙 Safari Coins by playing quizzes and maintaining daily login streaks to buy hats, frames, and animal avatars!</p>
+                </div>
+            </div>
+
+            <!-- Shop Categories Tabs -->
+            <div class="flex border-b-2 border-purple-200 gap-2">
+                <button onclick="app.switchShopTab('avatars')" id="tab-avatars" class="px-5 py-2.5 font-black text-sm rounded-t-2xl bg-purple-600 text-white">Animals</button>
+                <button onclick="app.switchShopTab('hats')" id="tab-hats" class="px-5 py-2.5 font-black text-sm rounded-t-2xl bg-purple-100 text-purple-700 hover:bg-purple-200">Hats</button>
+                <button onclick="app.switchShopTab('frames')" id="tab-frames" class="px-5 py-2.5 font-black text-sm rounded-t-2xl bg-purple-100 text-purple-700 hover:bg-purple-200">Frames</button>
+                <button onclick="app.switchShopTab('titles')" id="tab-titles" class="px-5 py-2.5 font-black text-sm rounded-t-2xl bg-purple-100 text-purple-700 hover:bg-purple-200">Titles</button>
+            </div>
+
+            <!-- Shop Items Grid -->
+            <div id="shop-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- VIEW 5: TROPHY ROOM / BADGES -->
+        <section id="view-trophy" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="app.showWorldMap()" class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-2xl transition shadow-md border-2 border-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left text-emerald-500"></i> Safari Map
+                </button>
+                <h2 class="text-3xl font-black text-amber-600">Safari Badges 🏆</h2>
+                <div class="w-20"></div>
+            </div>
+
+            <p class="text-center text-slate-600 font-bold">Complete each Safari table to collect awesome animal badges!</p>
+
+            <div id="badges-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 pt-2">
+                <!-- Badges Rendered Dynamically -->
+            </div>
+        </section>
+
+        <!-- CUTSCENE MODAL 1: PRE-LEVEL STORY BRIEFING CUTSCENE -->
+        <div id="modal-start-cutscene" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+            <div class="bg-gradient-to-br from-amber-100 via-emerald-100 to-teal-100 rounded-3xl p-6 sm:p-8 max-w-lg w-full card-3d border-4 border-amber-400 text-center space-y-6 animate-pop relative overflow-hidden">
+                
+                <div class="flex justify-between items-center text-xs font-black text-amber-800 uppercase tracking-widest border-b-2 border-amber-200 pb-2">
+                    <span>Safari Mission Briefing</span>
+                    <span id="cutscene-start-level-name">Zone 1</span>
+                </div>
+
+                <!-- Animated Character & Speech Bubble -->
+                <div class="flex flex-col items-center gap-4">
+                    <div class="bg-white rounded-2xl p-4 shadow-md border-2 border-amber-300 w-full speech-bubble text-slate-800 font-extrabold text-base sm:text-lg leading-relaxed">
+                        <p id="cutscene-start-dialogue">"Welcome to the Jungle! Let's master the Table of 2 together!"</p>
+                    </div>
+
+                    <!-- Character Avatar Container -->
+                    <div class="relative mt-2">
+                        <div id="cutscene-guide-avatar" class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-6xl shadow-xl animate-float border-4 border-white">
+                            🦁
+                        </div>
+                        <span class="absolute -bottom-2 bg-amber-600 text-white font-black text-[10px] px-3 py-0.5 rounded-full uppercase border border-amber-200">Safari Guide Leo</span>
+                    </div>
+                </div>
+
+                <!-- Level Challenge Highlights -->
+                <div class="bg-white/80 rounded-2xl p-4 border border-amber-300 grid grid-cols-3 gap-2 text-center text-xs font-extrabold">
+                    <div class="space-y-1">
+                        <span class="text-slate-400 block text-[10px] uppercase">Hearts</span>
+                        <span class="text-red-500 font-black text-base flex justify-center items-center gap-1">5 ❤️</span>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-slate-400 block text-[10px] uppercase">Questions</span>
+                        <span class="text-purple-600 font-black text-base">10 ❓</span>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-slate-400 block text-[10px] uppercase">Target</span>
+                        <span id="cutscene-target-table" class="text-emerald-600 font-black text-base">Table 2</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="app.closeStartCutscene()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition">
+                        Back
+                    </button>
+                    <button onclick="app.launchQuizFromCutscene()" class="flex-2 py-3 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-lg rounded-2xl btn-3d-green transition flex items-center justify-center gap-2">
+                        Let's Go! 🚀
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUTSCENE MODAL 2: POST-LEVEL STORY ENDING CUTSCENE (VICTORY / RETRY) -->
+        <div id="modal-end-cutscene" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+            <div id="end-cutscene-card" class="bg-gradient-to-br from-amber-50 via-emerald-50 to-teal-50 rounded-3xl p-6 sm:p-8 max-w-lg w-full card-3d border-4 border-emerald-400 text-center space-y-6 animate-pop relative overflow-hidden">
+                
+                <!-- Story Character & Dialogue -->
+                <div class="flex flex-col items-center gap-3">
+                    <div class="relative">
+                        <div id="end-cutscene-avatar" class="w-24 h-24 rounded-3xl bg-white flex items-center justify-center text-6xl shadow-2xl animate-dance frame-gold">
+                            <span id="end-avatar-emoji">🦁</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-4 shadow-md border-2 border-amber-300 w-full speech-bubble text-slate-800 font-extrabold text-base sm:text-lg leading-relaxed">
+                        <p id="end-cutscene-dialogue">"Sensational work! You ruled the Lion Kingdom!"</p>
+                    </div>
+                </div>
+
+                <!-- Stars Display -->
+                <div id="end-cutscene-stars" class="flex justify-center gap-3 text-4xl text-amber-400">
+                    <i class="fa-solid fa-star filter drop-shadow"></i>
+                    <i class="fa-solid fa-star filter drop-shadow"></i>
+                    <i class="fa-solid fa-star filter drop-shadow"></i>
+                </div>
+
+                <!-- Stats Breakdown -->
+                <div class="bg-white/80 rounded-2xl p-4 border border-emerald-300 grid grid-cols-3 gap-2 text-center text-xs font-black">
+                    <div>
+                        <span class="text-slate-400 block text-[10px] uppercase font-black">Accuracy</span>
+                        <span id="end-cutscene-accuracy" class="font-black text-lg text-emerald-700">100%</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px] uppercase font-black">Score</span>
+                        <span id="end-cutscene-score" class="font-black text-lg text-purple-700">+100</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px] uppercase font-black">Safari Coins</span>
+                        <span id="end-cutscene-coins" class="font-black text-lg text-amber-600">+50🪙</span>
+                    </div>
+                </div>
+
+                <!-- Badge Unlock Notification Banner -->
+                <div id="badge-unlocked-banner" class="hidden bg-gradient-to-r from-amber-400 to-yellow-500 rounded-2xl p-3 text-white font-black text-sm flex items-center justify-center gap-3 shadow-md">
+                    <span class="text-2xl">🏆</span>
+                    <span id="badge-unlocked-text">Unlocked Badge: Brave Lion!</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button onclick="app.closeEndCutsceneToMap()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition">
+                        Map
+                    </button>
+                    <button id="end-cutscene-next-btn" onclick="app.nextLevelFromEndCutscene()" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl btn-3d-green transition flex items-center justify-center gap-2">
+                        Next Zone 🚀
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: DAILY STREAK BONUS -->
+        <div id="modal-streak" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full card-3d border-4 border-amber-400 text-center space-y-6">
+                <div class="text-6xl animate-bounce">🔥</div>
+                <div class="space-y-1">
+                    <h3 class="text-3xl font-black text-amber-600">Daily Streak Bonus!</h3>
+                    <p id="streak-modal-msg" class="text-slate-600 font-bold">You logged in today! Streak: 1 Day</p>
+                </div>
+
+                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 flex items-center justify-center gap-3">
+                    <span class="text-3xl">🪙</span>
+                    <span id="streak-reward-amount" class="text-2xl font-black text-amber-700">+20 Safari Coins!</span>
+                </div>
+
+                <button onclick="document.getElementById('modal-streak').classList.add('hidden')" class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-black text-lg rounded-2xl btn-3d-orange transition">
+                    Claim Reward! 🎁
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-5xl mx-auto w-full text-center py-4 mt-8 text-xs font-bold text-slate-400">
+        Math Safari • Interactive Learning & Multiplication Adventure for Kids
+    </footer>
+
+    <script>
+        // WEB AUDIO API SOUND GENERATOR
+        class SoundEffects {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+            }
+
+            playCorrect() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3);
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+
+            playWrong() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.linearRampToValueAtTime(150, now + 0.25);
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+
+            playClick() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(250, now + 0.05);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+
+            playVictory() {
+                if (this.muted) return;
+                this.init();
+                const notes = [440, 554.37, 659.25, 880];
+                notes.forEach((freq, index) => {
+                    const now = this.ctx.currentTime + (index * 0.1);
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                });
+            }
+        }
+
+        // DATA: SAFARI ZONES, DIALOGUES & SHOP CATALOG
+        const safariData = [
+            { level: 1, title: "Monkey Jungle", emoji: "🐵", badge: "Playful Monkey", bg: "from-amber-400 to-yellow-500", border: "border-amber-400", introMsg: "Welcome to the Monkey Jungle! Monkeys love multiplying by 1. Let's gather bananas together!", victoryMsg: "A-Banana-ing success! You mastered Table 1!" },
+            { level: 2, title: "Parrot Valley", emoji: "🦜", badge: "Smart Parrot", bg: "from-emerald-400 to-teal-500", border: "border-emerald-400", introMsg: "Squawk! Parrots pair up in 2s! Show me your Table of 2 skills!", victoryMsg: "Feathers up! You soared through Table 2 like a champ!" },
+            { level: 3, title: "Giraffe Savanna", emoji: "🦒", badge: "Tall Giraffe", bg: "from-orange-400 to-amber-500", border: "border-orange-400", introMsg: "Reach high like a Giraffe! We are tackling Table of 3 across the open savanna!", victoryMsg: "Tall and proud! Table of 3 is officially conquered!" },
+            { level: 4, title: "Zebra Crossing", emoji: "🦓", badge: "Swift Zebra", bg: "from-slate-600 to-slate-800", border: "border-slate-500", introMsg: "Fast legs! Zebras have 4 stripes per set. Ready for Table of 4?", victoryMsg: "Speedy fast! You zoomed past Table of 4!" },
+            { level: 5, title: "Lion Kingdom", emoji: "🦁", badge: "Brave Lion", bg: "from-yellow-500 to-amber-600", border: "border-yellow-500", introMsg: "Roar! Lion cubs practice in packs of 5. Can you master Table of 5?", victoryMsg: "Roar of Victory! You are the King of Table 5!" },
+            { level: 6, title: "Hippo Oasis", emoji: "🦛", badge: "Mighty Hippo", bg: "from-cyan-500 to-blue-600", border: "border-cyan-500", introMsg: "Splash! Hippos splash in 6s at the river bank. Table of 6 awaits!", victoryMsg: "Splish Splash! Outstanding performance on Table 6!" },
+            { level: 7, title: "Cheetah Sprint", emoji: "🐆", badge: "Speedy Cheetah", bg: "from-amber-500 to-orange-600", border: "border-amber-500", introMsg: "On your mark! Cheetahs sprint in groups of 7. Keep up with Table 7!", victoryMsg: "Lightning fast! You blazed through Table 7!" },
+            { level: 8, title: "Elephant River", emoji: "🐘", badge: "Wise Elephant", bg: "from-blue-400 to-indigo-500", border: "border-blue-400", introMsg: "Wise Elephants never forget Table of 8! Are you ready to show your wisdom?", victoryMsg: "Truly wise! An unforgettable victory on Table 8!" },
+            { level: 9, title: "Flamingo Lagoon", emoji: "🦩", badge: "Graceful Flamingo", bg: "from-pink-400 to-rose-500", border: "border-pink-400", introMsg: "Graceful Flamingos dance in groups of 9. Let's do the Table of 9 dance!", victoryMsg: "Pure grace! You mastered the tricky Table 9!" },
+            { level: 10, title: "Safari Master", emoji: "👑", badge: "Grand Safari Crown", bg: "from-purple-500 to-indigo-600", border: "border-purple-500", introMsg: "The grand finale! Table of 10 for the ultimate Safari Explorer!", victoryMsg: "CROWNED CHAMPION! You mastered all 10 multiplication tables!" }
+        ];
+
+        const shopCatalog = {
+            avatars: [
+                { id: "avatar-lion", name: "Lion", emoji: "🦁", cost: 0 },
+                { id: "avatar-tiger", name: "Tiger", emoji: "🐯", cost: 30 },
+                { id: "avatar-panda", name: "Panda", emoji: "🐼", cost: 50 },
+                { id: "avatar-unicorn", name: "Unicorn", emoji: "🦄", cost: 100 },
+                { id: "avatar-dragon", name: "Dragon", emoji: "🐲", cost: 150 }
+            ],
+            hats: [
+                { id: "hat-none", name: "No Hat", emoji: "", cost: 0 },
+                { id: "hat-cap", name: "Party Hat", emoji: "🥳", cost: 20 },
+                { id: "hat-crown", name: "Golden Crown", emoji: "👑", cost: 60 },
+                { id: "hat-wizard", name: "Wizard Hat", emoji: "🧙‍♂️", cost: 90 },
+                { id: "hat-detective", name: "Safari Cap", emoji: "🤠", cost: 120 }
+            ],
+            frames: [
+                { id: "frame-none", name: "Simple Slate", class: "frame-none", cost: 0 },
+                { id: "frame-gold", name: "Gold Glow", class: "frame-gold", cost: 40 },
+                { id: "frame-neon", name: "Neon Cyber", class: "frame-neon", cost: 70 },
+                { id: "frame-rainbow", name: "Rainbow Magic", class: "frame-rainbow", cost: 120 }
+            ],
+            titles: [
+                { id: "title-novice", name: "Novice Explorer", cost: 0 },
+                { id: "title-math-hero", name: "Math Hero ⚡️️", cost: 30 },
+                { id: "title-table-wizard", name: "Table Wizard 🔮", cost: 70 },
+                { id: "title-safari-king", name: "Safari King 👑", cost: 120 }
+            ]
+        };
+
+        class MathSafariApp {
+            constructor() {
+                this.sounds = new SoundEffects();
+                this.userProgress = this.loadProgress();
+
+                this.currentLevel = 1;
+                this.studyIndex = 1;
+
+                // Quiz state
+                this.quizQuestions = [];
+                this.quizCurrentIndex = 0;
+                this.quizScore = 0;
+                this.quizLives = 5; 
+                this.quizIsAnswering = false;
+
+                this.currentShopTab = 'avatars';
+
+                this.init();
+            }
+
+            init() {
+                this.checkDailyStreak();
+                this.renderWorldMap();
+                this.updateHeaderStats();
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('math_safari_v3_progress');
+                if (saved) {
+                    try { return JSON.parse(saved); } catch(e) {}
+                }
+                return {
+                    unlockedLevel: 1,
+                    stars: {},
+                    coins: 30, // Initial bonus coins
+                    streak: 1,
+                    lastLoginDate: null,
+                    avatar: {
+                        emoji: "🦁",
+                        hat: "",
+                        frame: "frame-none",
+                        title: "Novice Explorer"
+                    },
+                    inventory: ["avatar-lion", "hat-none", "frame-none", "title-novice"]
+                };
+            }
+
+            saveProgress() {
+                localStorage.setItem('math_safari_v3_progress', JSON.stringify(this.userProgress));
+                this.updateHeaderStats();
+            }
+
+            checkDailyStreak() {
+                const today = new Date().toISOString().split('T')[0];
+                const lastDate = this.userProgress.lastLoginDate;
+
+                if (!lastDate) {
+                    this.userProgress.lastLoginDate = today;
+                    this.userProgress.streak = 1;
+                    this.triggerStreakModal(1, 20);
+                } else if (lastDate !== today) {
+                    const prevDate = new Date();
+                    prevDate.setDate(prevDate.getDate() - 1);
+                    const yesterdayStr = prevDate.toISOString().split('T')[0];
+
+                    if (lastDate === yesterdayStr) {
+                        this.userProgress.streak += 1;
+                    } else {
+                        this.userProgress.streak = 1; 
+                    }
+
+                    const bonusCoins = 15 + (this.userProgress.streak * 5);
+                    this.userProgress.coins += bonusCoins;
+                    this.userProgress.lastLoginDate = today;
+                    this.saveProgress();
+
+                    this.triggerStreakModal(this.userProgress.streak, bonusCoins);
+                }
+            }
+
+            triggerStreakModal(streakDays, rewardCoins) {
+                document.getElementById('streak-modal-msg').innerText = `You logged in today! Current Streak: ${streakDays} Day${streakDays > 1 ? 's' : ''}!`;
+                document.getElementById('streak-reward-amount').innerText = `+${rewardCoins} Safari Coins! 🪙`;
+                const modal = document.getElementById('modal-streak');
+                modal.classList.remove('hidden');
+            }
+
+            updateHeaderStats() {
+                let totalStars = 0;
+                Object.values(this.userProgress.stars).forEach(s => totalStars += s);
+                document.getElementById('total-stars-count').innerText = totalStars;
+
+                document.getElementById('total-coins-count').innerText = this.userProgress.coins || 0;
+                document.getElementById('shop-coins-count').innerText = this.userProgress.coins || 0;
+                document.getElementById('streak-count').innerText = `${this.userProgress.streak || 1}d`;
+
+                const av = this.userProgress.avatar;
+                document.getElementById('header-avatar-emoji').innerText = av.emoji;
+                document.getElementById('header-avatar-hat').innerText = av.hat;
+                document.getElementById('header-avatar-title').innerText = av.title;
+
+                const avatarContainer = document.getElementById('header-avatar-container');
+                avatarContainer.className = `w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-400 to-indigo-500 flex items-center justify-center text-3xl shadow-md ${av.frame} transition transform hover:scale-105`;
+            }
+
+            toggleAudio() {
+                this.sounds.muted = !this.sounds.muted;
+                const icon = document.getElementById('audio-icon');
+                if (this.sounds.muted) {
+                    icon.className = "fa-solid fa-volume-xmark text-lg text-red-500";
+                } else {
+                    icon.className = "fa-solid fa-volume-high text-lg text-emerald-600";
+                    this.sounds.playClick();
+                }
+            }
+
+            showView(viewId) {
+                ['view-world-map', 'view-study', 'view-quiz', 'view-shop', 'view-trophy'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+                document.getElementById(viewId).classList.remove('hidden');
+            }
+
+            showWorldMap() {
+                this.sounds.playClick();
+                this.renderWorldMap();
+                this.showView('view-world-map');
+            }
+
+            renderWorldMap() {
+                const grid = document.getElementById('level-grid');
+                grid.innerHTML = '';
+
+                safariData.slice(0, 10).forEach(item => {
+                    const isUnlocked = item.level <= this.userProgress.unlockedLevel;
+                    const starsEarned = this.userProgress.stars[item.level] || 0;
+
+                    let starsHtml = '';
+                    for (let i = 1; i <= 3; i++) {
+                        starsHtml += `<i class="fa-solid fa-star ${i <= starsEarned ? 'text-amber-400 filter drop-shadow' : 'text-slate-300'} text-sm"></i>`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = `bg-white/90 rounded-3xl p-4 text-center card-3d border-4 ${isUnlocked ? 'border-amber-300 cursor-pointer transform hover:-translate-y-1.5 transition duration-200' : 'border-slate-200 opacity-60'}`;
+
+                    card.innerHTML = `
+                        <div class="relative">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr ${item.bg} flex items-center justify-center text-3xl shadow-md mb-2">
+                                ${isUnlocked ? item.emoji : '🔒'}
+                            </div>
+                            <div class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Table</div>
+                            <div class="text-2xl font-black text-slate-800">× ${item.level}</div>
+                            <div class="text-xs font-bold text-emerald-600 mt-1">${item.title}</div>
+                            
+                            <div class="flex justify-center gap-1 mt-3">
+                                ${isUnlocked ? starsHtml : '<span class="text-xs text-slate-400 font-bold">Locked</span>'}
+                            </div>
+                        </div>
+                    `;
+
+                    if (isUnlocked) {
+                        card.onclick = () => this.openStudyMode(item.level);
+                    }
+
+                    grid.appendChild(card);
+                });
+
+                // Boss level
+                const bossContainer = document.getElementById('boss-level-container');
+                const isBossUnlocked = this.userProgress.unlockedLevel > 10;
+                
+                bossContainer.innerHTML = `
+                    <div onclick="${isBossUnlocked ? 'app.triggerStartCutscene(11)' : ''}" class="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 rounded-3xl p-6 text-white card-3d border-4 border-purple-300 flex flex-col sm:flex-row items-center justify-between gap-4 ${isBossUnlocked ? 'cursor-pointer hover:scale-[1.01] transition' : 'opacity-70'}">
+                        <div class="flex items-center gap-4 text-center sm:text-left">
+                            <div class="text-5xl animate-bounce">👑</div>
+                            <div>
+                                <h3 class="text-2xl font-black">Ultimate Safari Boss Quiz!</h3>
+                                <p class="text-purple-100 text-sm font-bold">Mixed multiplication challenge (1 - 10) to earn extra 🪙 coins!</p>
+                            </div>
+                        </div>
+                        <div>
+                            ${isBossUnlocked 
+                                ? `<button class="px-6 py-3 bg-amber-400 text-amber-950 font-black rounded-2xl btn-3d-orange shadow-lg">Challenge Boss!</button>`
+                                : `<span class="px-4 py-2 bg-purple-900/60 rounded-xl text-xs font-bold text-purple-200">Finish Table 10 to Unlock</span>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }
+
+            openStudyMode(level) {
+                this.sounds.playClick();
+                this.currentLevel = level;
+                this.studyIndex = 1;
+
+                const data = safariData.find(d => d.level === level) || { title: "Boss Challenge", emoji: "👑" };
+                document.getElementById('study-level-title').innerText = `${data.emoji} Table of ${level} Practice`;
+
+                const pillsContainer = document.getElementById('study-pills');
+                pillsContainer.innerHTML = '';
+                for (let i = 1; i <= 10; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `w-9 h-9 rounded-xl font-black text-sm border-2 transition ${i === this.studyIndex ? 'bg-emerald-500 text-white border-emerald-600' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'}`;
+                    btn.innerText = i;
+                    btn.onclick = () => {
+                        this.sounds.playClick();
+                        this.studyIndex = i;
+                        this.updateStudyCard();
+                    };
+                    pillsContainer.appendChild(btn);
+                }
+
+                this.updateStudyCard();
+                this.showView('view-study');
+            }
+
+            prevStudyCard() {
+                this.sounds.playClick();
+                if (this.studyIndex > 1) {
+                    this.studyIndex--;
+                    this.updateStudyCard();
+                }
+            }
+
+            nextStudyCard() {
+                this.sounds.playClick();
+                if (this.studyIndex < 10) {
+                    this.studyIndex++;
+                    this.updateStudyCard();
+                }
+            }
+
+            updateStudyCard() {
+                const num1 = this.currentLevel;
+                const num2 = this.studyIndex;
+                const result = num1 * num2;
+
+                document.getElementById('study-equation').innerText = `${num1} × ${num2} = ${result}`;
+
+                const repeatedArr = Array(num2).fill(num1);
+                document.getElementById('study-repeated-addition').innerText = `${repeatedArr.join(' + ')} = ${result}`;
+
+                const arrayContainer = document.getElementById('study-visual-array');
+                arrayContainer.innerHTML = '';
+
+                for (let r = 0; r < num2; r++) {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = "flex items-center gap-2 justify-center";
+                    for (let c = 0; c < num1; c++) {
+                        const dot = document.createElement('span');
+                        dot.className = "w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-400 border-2 border-emerald-600 flex items-center justify-center text-[10px] text-white font-bold shadow-sm";
+                        dot.innerText = "•";
+                        rowDiv.appendChild(dot);
+                    }
+                    arrayContainer.appendChild(rowDiv);
+                }
+
+                document.getElementById('study-explanation').innerText = `"${num2} group${num2 > 1 ? 's' : ''} of ${num1} equals ${result}!"`;
+
+                const pills = document.getElementById('study-pills').children;
+                for (let i = 0; i < pills.length; i++) {
+                    if (i + 1 === this.studyIndex) {
+                        pills[i].className = "w-9 h-9 rounded-xl font-black text-sm border-2 bg-emerald-500 text-white border-emerald-600 shadow-md";
+                    } else {
+                        pills[i].className = "w-9 h-9 rounded-xl font-black text-sm border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200";
+                    }
+                }
+            }
+
+            // CUTSCENE 1: START LEVEL BRIEFING
+            triggerStartCutscene(level) {
+                this.sounds.playClick();
+                this.currentLevel = level;
+
+                const zoneData = safariData.find(d => d.level === level);
+                const levelName = zoneData ? zoneData.title : "Boss Challenge";
+                const introText = zoneData ? zoneData.introMsg : "Welcome to the Ultimate Boss Quiz! Prove your multiplication mastery!";
+                const guideEmoji = zoneData ? zoneData.emoji : "👑";
+
+                document.getElementById('cutscene-start-level-name').innerText = `Zone ${level}: ${levelName}`;
+                document.getElementById('cutscene-start-dialogue').innerText = `"${introText}"`;
+                document.getElementById('cutscene-guide-avatar').innerText = guideEmoji;
+                document.getElementById('cutscene-target-table').innerText = level <= 10 ? `Table of ${level}` : "Tables 1-10";
+
+                const modal = document.getElementById('modal-start-cutscene');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            closeStartCutscene() {
+                this.sounds.playClick();
+                const modal = document.getElementById('modal-start-cutscene');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            launchQuizFromCutscene() {
+                this.closeStartCutscene();
+                this.startQuiz(this.currentLevel);
+            }
+
+            startQuiz(level) {
+                this.currentLevel = level;
+                this.quizScore = 0;
+                this.quizLives = 5;
+                this.quizCurrentIndex = 0;
+                this.quizIsAnswering = false;
+
+                this.quizQuestions = [];
+                if (level <= 10) {
+                    for (let i = 1; i <= 10; i++) {
+                        this.quizQuestions.push({ num1: level, num2: i, answer: level * i });
+                    }
+                    this.quizQuestions.sort(() => Math.random() - 0.5);
+                } else {
+                    for (let i = 0; i < 10; i++) {
+                        const n1 = Math.floor(Math.random() * 10) + 1;
+                        const n2 = Math.floor(Math.random() * 10) + 1;
+                        this.quizQuestions.push({ num1: n1, num2: n2, answer: n1 * n2 });
+                    }
+                }
+
+                this.updateQuizLivesDisplay();
+                this.renderQuizQuestion();
+                this.showView('view-quiz');
+            }
+
+            updateQuizLivesDisplay() {
+                const container = document.getElementById('quiz-lives');
+                container.innerHTML = '';
+                for (let i = 0; i < 5; i++) {
+                    if (i < this.quizLives) {
+                        container.innerHTML += `<i class="fa-solid fa-heart text-red-500"></i>`;
+                    } else {
+                        container.innerHTML += `<i class="fa-regular fa-heart text-slate-300"></i>`;
+                    }
+                }
+            }
+
+            renderQuizQuestion() {
+                this.quizIsAnswering = false;
+                const feedbackEl = document.getElementById('quiz-feedback');
+                feedbackEl.classList.add('hidden');
+
+                const q = this.quizQuestions[this.quizCurrentIndex];
+                
+                const pct = (this.quizCurrentIndex / this.quizQuestions.length) * 100;
+                document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+                document.getElementById('quiz-score').innerText = this.quizScore;
+                document.getElementById('quiz-question-number').innerText = `Question ${this.quizCurrentIndex + 1} of ${this.quizQuestions.length}`;
+                document.getElementById('quiz-question-text').innerText = `${q.num1} × ${q.num2} = ?`;
+
+                const options = new Set();
+                options.add(q.answer);
+
+                while (options.size < 4) {
+                    const offset = (Math.floor(Math.random() * 5) - 2) * q.num1;
+                    const fake = q.answer + (offset !== 0 ? offset : q.num1);
+                    if (fake > 0 && fake !== q.answer) {
+                        options.add(fake);
+                    } else {
+                        options.add(Math.floor(Math.random() * 100) + 1);
+                    }
+                }
+
+                const shuffledOptions = Array.from(options).sort(() => Math.random() - 0.5);
+
+                const grid = document.getElementById('quiz-options-grid');
+                grid.innerHTML = '';
+
+                shuffledOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "py-4 px-6 bg-slate-100 hover:bg-emerald-100 border-4 border-slate-200 hover:border-emerald-400 text-slate-800 font-black text-2xl sm:text-3xl rounded-2xl transition card-3d flex items-center justify-center";
+                    btn.innerText = opt;
+                    btn.onclick = () => this.handleAnswer(opt, btn, q.answer);
+                    grid.appendChild(btn);
+                });
+            }
+
+            handleAnswer(selected, buttonEl, correctAnswer) {
+                if (this.quizIsAnswering) return;
+                this.quizIsAnswering = true;
+
+                const feedbackEl = document.getElementById('quiz-feedback');
+                feedbackEl.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-red-100', 'text-red-800');
+
+                if (selected === correctAnswer) {
+                    this.sounds.playCorrect();
+                    this.quizScore += 10;
+                    document.getElementById('quiz-score').innerText = this.quizScore;
+
+                    buttonEl.className = "py-4 px-6 bg-emerald-500 border-4 border-emerald-600 text-white font-black text-2xl sm:text-3xl rounded-2xl card-3d flex items-center justify-center";
+
+                    feedbackEl.classList.add('bg-emerald-100', 'text-emerald-800');
+                    feedbackEl.innerText = "🎉 Super! Correct Answer!";
+
+                    setTimeout(() => {
+                        this.quizCurrentIndex++;
+                        if (this.quizCurrentIndex < this.quizQuestions.length) {
+                            this.renderQuizQuestion();
+                        } else {
+                            this.finishQuiz();
+                        }
+                    }, 1100);
+
+                } else {
+                    this.sounds.playWrong();
+                    this.quizLives--;
+                    this.updateQuizLivesDisplay();
+
+                    buttonEl.className = "py-4 px-6 bg-red-500 border-4 border-red-600 text-white font-black text-2xl sm:text-3xl rounded-2xl card-3d flex items-center justify-center animate-shake";
+
+                    feedbackEl.classList.add('bg-red-100', 'text-red-800');
+                    feedbackEl.innerText = `Oops! ${this.quizQuestions[this.quizCurrentIndex].num1} × ${this.quizQuestions[this.quizCurrentIndex].num2} = ${correctAnswer}`;
+
+                    if (this.quizLives <= 0) {
+                        setTimeout(() => {
+                            this.finishQuiz(true);
+                        }, 1300);
+                    } else {
+                        setTimeout(() => {
+                            this.quizCurrentIndex++;
+                            if (this.quizCurrentIndex < this.quizQuestions.length) {
+                                this.renderQuizQuestion();
+                            } else {
+                                this.finishQuiz();
+                            }
+                        }, 1300);
+                    }
+                }
+            }
+
+            // CUTSCENE 2: POST-LEVEL STORY ENDING
+            finishQuiz(gameOver = false) {
+                const totalQuestions = this.quizQuestions.length;
+                const correctCount = this.quizScore / 10;
+                const accuracy = Math.round((correctCount / totalQuestions) * 100);
+
+                const zoneData = safariData.find(d => d.level === this.currentLevel);
+
+                let starsEarned = 0;
+                if (accuracy >= 90) starsEarned = 3;
+                else if (accuracy >= 80) starsEarned = 2;
+                else if (accuracy >= 60) starsEarned = 1;
+
+                const coinsEarned = Math.round(this.quizScore / 2) + (starsEarned * 10);
+
+                document.getElementById('end-cutscene-accuracy').innerText = `${accuracy}%`;
+                document.getElementById('end-cutscene-score').innerText = `+${this.quizScore}`;
+                document.getElementById('end-cutscene-coins').innerText = `+${coinsEarned}🪙`;
+
+                const starsContainer = document.getElementById('end-cutscene-stars');
+                starsContainer.innerHTML = '';
+                for (let i = 1; i <= 3; i++) {
+                    starsContainer.innerHTML += `<i class="fa-solid fa-star ${i <= starsEarned ? 'text-amber-400 filter drop-shadow' : 'text-slate-200'}"></i>`;
+                }
+
+                const endAvatarEmoji = document.getElementById('end-avatar-emoji');
+                const endDialogue = document.getElementById('end-cutscene-dialogue');
+                const badgeBanner = document.getElementById('badge-unlocked-banner');
+
+                endAvatarEmoji.innerText = this.userProgress.avatar.emoji;
+                badgeBanner.classList.add('hidden');
+
+                if (gameOver) {
+                    endDialogue.innerText = `"Don't worry Explorer! Practice makes perfect in the Safari! Let's try again!"`;
+                } else if (accuracy >= 80) {
+                    this.sounds.playVictory();
+                    const winMsg = zoneData ? zoneData.victoryMsg : "Epic Victory on the Boss Challenge!";
+                    endDialogue.innerText = `"${winMsg}"`;
+
+                    if (typeof confetti === 'function') {
+                        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                    }
+
+                    if (this.currentLevel === this.userProgress.unlockedLevel && this.currentLevel <= 10) {
+                        this.userProgress.unlockedLevel = this.currentLevel + 1;
+                    }
+
+                    const existingStars = this.userProgress.stars[this.currentLevel] || 0;
+                    if (starsEarned > existingStars) {
+                        this.userProgress.stars[this.currentLevel] = starsEarned;
+                    }
+
+                    if (zoneData) {
+                        badgeBanner.classList.remove('hidden');
+                        document.getElementById('badge-unlocked-text').innerText = `Badge Unlocked: ${zoneData.badge}!`;
+                    }
+
+                    this.userProgress.coins += coinsEarned;
+                    this.saveProgress();
+                } else {
+                    endDialogue.innerText = `"Good effort! Score 80%+ to unlock the next safari zone!"`;
+                    this.userProgress.coins += coinsEarned;
+                    this.saveProgress();
+                }
+
+                const modal = document.getElementById('modal-end-cutscene');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            closeEndCutsceneToMap() {
+                this.sounds.playClick();
+                const modal = document.getElementById('modal-end-cutscene');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                this.showWorldMap();
+            }
+
+            nextLevelFromEndCutscene() {
+                this.sounds.playClick();
+                const modal = document.getElementById('modal-end-cutscene');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+
+                if (this.currentLevel < 10) {
+                    this.openStudyMode(this.currentLevel + 1);
+                } else {
+                    this.showWorldMap();
+                }
+            }
+
+            // SHOP & AVATAR CUSTOMIZATION LOGIC
+            showAvatarShop() {
+                this.sounds.playClick();
+                this.updateShopPreview();
+                this.renderShopItems();
+                this.showView('view-shop');
+            }
+
+            switchShopTab(tab) {
+                this.sounds.playClick();
+                this.currentShopTab = tab;
+                ['avatars', 'hats', 'frames', 'titles'].forEach(t => {
+                    const btn = document.getElementById(`tab-${t}`);
+                    if (t === tab) {
+                        btn.className = "px-5 py-2.5 font-black text-sm rounded-t-2xl bg-purple-600 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-5 py-2.5 font-black text-sm rounded-t-2xl bg-purple-100 text-purple-700 hover:bg-purple-200";
+                    }
+                });
+                this.renderShopItems();
+            }
+
+            updateShopPreview() {
+                const av = this.userProgress.avatar;
+                document.getElementById('shop-preview-emoji').innerText = av.emoji;
+                document.getElementById('shop-preview-hat').innerText = av.hat;
+                document.getElementById('shop-preview-title').innerText = av.title;
+
+                const container = document.getElementById('shop-preview-avatar-container');
+                container.className = `w-28 h-28 rounded-3xl bg-white flex items-center justify-center text-6xl shadow-2xl ${av.frame}`;
+            }
+
+            renderShopItems() {
+                const grid = document.getElementById('shop-items-grid');
+                grid.innerHTML = '';
+
+                const items = shopCatalog[this.currentShopTab];
+
+                items.forEach(item => {
+                    const isOwned = this.userProgress.inventory.includes(item.id);
+                    const av = this.userProgress.avatar;
+
+                    let isEquipped = false;
+                    if (this.currentShopTab === 'avatars' && av.emoji === item.emoji) isEquipped = true;
+                    if (this.currentShopTab === 'hats' && av.hat === item.emoji) isEquipped = true;
+                    if (this.currentShopTab === 'frames' && av.frame === item.class) isEquipped = true;
+                    if (this.currentShopTab === 'titles' && av.title === item.name) isEquipped = true;
+
+                    const card = document.createElement('div');
+                    card.className = "bg-white/90 rounded-3xl p-4 text-center card-3d border-4 border-purple-200 flex flex-col items-center justify-between gap-2";
+
+                    let displayVisual = `<div class="text-4xl my-2">${item.emoji || '✨'}</div>`;
+                    if (this.currentShopTab === 'frames') {
+                        displayVisual = `<div class="w-12 h-12 rounded-2xl ${item.class} flex items-center justify-center my-1 text-xl">🦁</div>`;
+                    } else if (this.currentShopTab === 'titles') {
+                        displayVisual = `<div class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-[10px] font-black uppercase my-2">${item.name}</div>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="font-black text-slate-800 text-sm">${item.name}</div>
+                        ${displayVisual}
+                        <div class="w-full mt-2">
+                            ${isEquipped 
+                                ? `<button class="w-full py-2 bg-emerald-500 text-white font-black text-xs rounded-xl shadow">Equipped</button>`
+                                : isOwned 
+                                    ? `<button onclick="app.equipItem('${this.currentShopTab}', '${item.id}')" class="w-full py-2 bg-purple-500 hover:bg-purple-600 text-white font-black text-xs rounded-xl shadow transition">Equip</button>`
+                                    : `<button onclick="app.buyItem('${this.currentShopTab}', '${item.id}')" class="w-full py-2 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1">Buy 🪙${item.cost}</button>`
+                            }
+                        </div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+            }
+
+            buyItem(category, itemId) {
+                const item = shopCatalog[category].find(i => i.id === itemId);
+                if (!item) return;
+
+                if (this.userProgress.coins >= item.cost) {
+                    this.sounds.playVictory();
+                    this.userProgress.coins -= item.cost;
+                    this.userProgress.inventory.push(itemId);
+                    this.equipItem(category, itemId);
+                } else {
+                    this.sounds.playWrong();
+                    alert("Not enough 🪙 Safari Coins! Complete more quizzes to earn coins!");
+                }
+            }
+
+            equipItem(category, itemId) {
+                this.sounds.playClick();
+                const item = shopCatalog[category].find(i => i.id === itemId);
+                if (!item) return;
+
+                if (category === 'avatars') this.userProgress.avatar.emoji = item.emoji;
+                if (category === 'hats') this.userProgress.avatar.hat = item.emoji;
+                if (category === 'frames') this.userProgress.avatar.frame = item.class;
+                if (category === 'titles') this.userProgress.avatar.title = item.name;
+
+                this.saveProgress();
+                this.updateShopPreview();
+                this.renderShopItems();
+            }
+
+            showTrophyRoom() {
+                this.sounds.playClick();
+                const grid = document.getElementById('badges-grid');
+                grid.innerHTML = '';
+
+                safariData.forEach(item => {
+                    const starsEarned = this.userProgress.stars[item.level] || 0;
+                    const isUnlocked = starsEarned >= 1;
+
+                    const card = document.createElement('div');
+                    card.className = `bg-white/90 rounded-3xl p-5 text-center card-3d border-4 ${isUnlocked ? 'border-amber-300' : 'border-slate-200 opacity-50'}`;
+
+                    card.innerHTML = `
+                        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr ${item.bg} flex items-center justify-center text-4xl shadow-md mb-3">
+                            ${isUnlocked ? item.emoji : '🔒'}
+                        </div>
+                        <div class="text-[10px] font-black uppercase text-amber-600 tracking-wider">Badge</div>
+                        <div class="text-lg font-black text-slate-800">${item.badge}</div>
+                        <div class="text-xs font-bold text-slate-400 mt-1">${isUnlocked ? 'Unlocked!' : 'Requires 80%+ Score'}</div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+
+                this.showView('view-trophy');
+            }
+        }
+
+        let app;
+        window.onload = () => {
+            app = new MathSafariApp();
+        };
+    </script>
+</body>
+</html>
